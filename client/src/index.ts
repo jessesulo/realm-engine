@@ -58,7 +58,6 @@ import { ScriptHost } from './scripts/ScriptHost.js';
 import type { BridgeClientRef } from './scripts/bridge/BridgeDeps.js';
 import { GameWorldState } from './state/GameWorldState.js';
 import { ProjectileTracker } from './state/ProjectileTracker.js';
-// AutoNexusBridge removed — using in-process Auto Nexus plugin instead.
 import { GameDataLoader } from './game-data/GameDataLoader.js';
 import { PluginManager } from './plugins/PluginManager.js';
 import { PacketInspector } from './dev/server/PacketInspector.js';
@@ -358,8 +357,6 @@ async function main() {
   const projectileTracker = new ProjectileTracker(gameData, worldState);
   projectileTracker.attach(proxy);
 
-  // AutoNexusBridge removed — plugin handles Auto Nexus in-process now.
-
   const partyRoster = new PartyRosterState();
   partyRoster.attach(proxy);
 
@@ -421,12 +418,10 @@ async function main() {
     () => ({ worldState, projectileTracker }),
   );
 
-  // Dev override: grant all plans locally so gated plugins (auto-dodge, safe-walk,
-  // spoof-push-tiles, etc.) are usable without a server subscription.
-  if (devMode) {
-    pluginManager.loginGateActive = true;
-    pluginManager.setActivePlans(['dodge', 'developer']);
-  }
+  // Admin dev: gate always active, all plans granted, admin mode on — no sign-in required.
+  pluginManager.loginGateActive = true;
+  pluginManager.adminMode = true;
+  pluginManager.setActivePlans(['free', 'dodge', 'developer', 'pro', 'elite', 'combined']);
 
   // 6. Dev dashboard FIRST — Electron only waits ~10s for http://localhost:3000; metadata fetch can be slow
   let devServer: DevServer | undefined;
@@ -513,7 +508,7 @@ async function main() {
   // 9. Internal DLL bridge (named pipe to injected DLL). Node.js is the pipe
   //    server; the injected DLL connects to us. listen() starts the server once
   //    at startup and it stays open — no reconnect hammering needed.
-  const internalBridge = new InternalBridge('');
+  const internalBridge = new InternalBridge('admin-dev');
   // #region agent log
   // #endregion
   setDllFeatureSender((key, value) => internalBridge.setFeature(key, value));

@@ -20,7 +20,7 @@ void IpcBridge_RequestShutdown();
 // (pluginId="ghostHit", action="<ownerObjId>:<bulletId>"). The proxy
 // crafts and sends a real PLAYERHIT packet on the client's behalf —
 // keeps server-client hit accounting consistent AND is observed by the
-// existing AutoNexusBridge.ts PLAYERHIT hook so AutoNexus gets the
+// in-process Auto Nexus plugin's PLAYERHIT handling so Auto Nexus gets the
 // pre-damage signal it would otherwise miss. Thread-safe: queues
 // internally so callers on the game-update thread don't need to know
 // the pipe handle. No-op if the pipe is not authenticated.

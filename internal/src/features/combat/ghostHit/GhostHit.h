@@ -19,8 +19,8 @@
 // the dodge uses, but on the player's actual position rather than the
 // dodge's planning grid. When we detect a hit the game would have missed,
 // we emit a signed event to the proxy via IpcBridge; the proxy crafts a
-// PLAYERHIT packet on our behalf, which the server applies and which our
-// existing AutoNexusBridge hook picks up — giving AutoNexus the pre-damage
+// PLAYERHIT packet on our behalf, which the server applies and which the
+// in-process Auto Nexus plugin picks up — giving Auto Nexus the pre-damage
 // signal it needs.
 //
 // On by default — ghost-hit deaths are far more harmful than the small

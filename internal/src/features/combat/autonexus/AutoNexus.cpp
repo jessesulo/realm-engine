@@ -183,15 +183,19 @@ static float FindFirstProjHitTimeMs(
 }
 
 static void DbgNexus(const char* msg, const char* hyp, const char* data) {
+    // Debug trace -> %TEMP%\autonexus-debug-489c1d.log (runtime path, no personal dirs).
+    char dir[MAX_PATH] = {};
+    const DWORD n = GetTempPathA(MAX_PATH, dir);
+    if (n == 0 || n >= MAX_PATH) return;
+    char path[MAX_PATH] = {};
+    snprintf(path, sizeof(path), "%sautonexus-debug-489c1d.log", dir);
     FILE* f = nullptr;
-    fopen_s(&f, "C:\\Users\\trump\\Desktop\\Current\\debug-489c1d.log", "a");
-    if (f) {
-        fprintf(f,
-            "{\"sessionId\":\"489c1d\",\"location\":\"AutoNexus/AutoNexus.cpp\",\"message\":\"%s\","
-            "\"data\":{%s},\"timestamp\":%llu,\"hypothesisId\":\"%s\"}\n",
-            msg, data, (unsigned long long)GetTickCount64(), hyp);
-        fclose(f);
-    }
+    if (fopen_s(&f, path, "a") != 0 || !f) return;
+    fprintf(f,
+        "{\"sessionId\":\"489c1d\",\"location\":\"AutoNexus/AutoNexus.cpp\",\"message\":\"%s\","
+        "\"data\":{%s},\"timestamp\":%llu,\"hypothesisId\":\"%s\"}\n",
+        msg, data, (unsigned long long)GetTickCount64(), hyp);
+    fclose(f);
 }
 
 static void DoNexus()
